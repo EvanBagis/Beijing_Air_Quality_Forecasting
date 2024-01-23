@@ -11,9 +11,10 @@ import matplotlib.pyplot as plt
 
 from river import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.multioutput import MultiOutputRegressor
 # metrics
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 
 # models
 from sklearn.neighbors import KNeighborsRegressor
@@ -22,6 +23,7 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, Las
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
 
 from tsmoothie.smoother import LowessSmoother, KalmanSmoother, ConvolutionSmoother, SpectralSmoother
 
@@ -254,8 +256,12 @@ def create_x_y_raw(path, enf_target, n_stations, future, num_feats, sm):
     x = np.stack(x); y = np.stack(y); raw_y = np.stack(raw_y)
     return x, y, raw_y
 
-path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/raw_data/'
-files = sorted(os.listdir(path))
+future = 12; num_feats = 12
+path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/raw_data/'; files = sorted(os.listdir(path))
+targets = ['PM2.5', 'PM10', 'SO2', 'NO2', 'CO', 'O3']
+
+
+
 
 # load and concatenate all the files into a single dataframe
 dfs = pd.concat([pd.read_csv(path + file, index_col=0) for file in files])
@@ -266,65 +272,68 @@ dfs = dfs.drop(['year', 'month', 'day', 'hour'], axis=1)
 
 # transform wind directions into floats and transform the column
 dfs['wd'] = dfs['wd'].apply(wind_dir).apply(transform)
+stations = list(dfs['station'].unique())
 
-print(dfs)
-
-
-
-'''
-targets = ["coarsePM", "PM25", "PM10", "O3", "NO2"]
-num_stations = [11, 11, 12, 4, 11]
-future = 12; num_feats = 12
-for target, n_stations in zip(targets, num_stations):
-
-    enf_target = f'{target}_ref.csv'
-    models_path = f"/var/snap/docker/common/var-lib-docker/volumes/fmi-vol/_data/forecaster/{target}/"
-    #x, y1, raw_y = create_x_y_raw(path, enf_target, n_stations, future, num_feats, sm="conv")
-    #x, y2, raw_y = create_x_y_raw(path, enf_target, n_stations, future, num_feats, sm="kalman")
-    x, y3, raw_y = create_x_y_raw(path, enf_target, n_stations, future, num_feats, sm="spectral")
+for target in targets:
+    target_by_station = pd.DataFrame()
+    for station in stations:
+        temp = dfs[dfs['station']==station]
+        target_by_station[f"{target}_{station}"] = temp[target]
+        
+    target_by_station = target_by_station.dropna().reset_index(drop=True)
+    
+    x = []; y = []; raw_y = []
+    for i in range(len(target_by_station)-num_feats-future):
+        x.append(np.ravel(np.array(target_by_station.iloc[i:i+num_feats, :])))
+        y.append(np.ravel(np.array(target_by_station.iloc[i+num_feats:i+num_feats+future, :])))
+        #raw_y.append(np.ravel(np.array(target_by_station.iloc[i+num_feats:i+num_feats+future, :])))
+    
+    x = np.stack(x); y = np.stack(y)#; raw_y = np.stack(raw_y)
+    #print(x, y)
+    
     scaler = StandardScaler()
-    split = int(0.8*x.shape[0])
+    split = int(0.5*x.shape[0])
     x_train = x[:split,:]
-    y_train_raw = raw_y[:split,:]
-    y_train3 = y3[:split,:]
+    #y_train_raw = raw_y[:split,:]
+    y_train = y[:split,:]
     x_test = x[split:,:]    
-    y_test = raw_y[split:,:]
+    y_test = y[split:,:]
     
     model1 = LassoLars(alpha=0.001)#Lasso(alpha=0.0001)
     model2 = MLPRegressor()
     model3 = RandomForestRegressor(n_estimators=20, n_jobs=-1)
-    model4 = XGBRegressor(n_estimators = 200, objective='reg:squarederror', n_jobs=-1)
+    model4 = XGBRegressor(n_estimators = 50, objective='reg:squarederror', n_jobs=-1)
+    model5 = LGBMRegressor(n_estimators = 5, n_jobs=-1, verbose=-1)
     
 
     preds = []# , "MLP":model2, "RF":model3, "XGB":model4
-    models = {"LR":model1, "XGB":model4}; ys = {"raw":y_train_raw}#y_train1, y_train2, y_train3, 
-    for model in models.keys():
-        for y_train in ys.keys():
-            
-            
-            models[model].fit(x_train, ys[y_train])
-            with open(models_path + f"{model}_{y_train}.sav", "wb") as f:
-                pickle.dump(models[model], f)
-                
-            p = models[model].predict(x_test).reshape(y_test.shape[0],future,n_stations)
-            preds.append(p)
+    models = {"LR":model1, 'LGB':model5}
+    for model in tqdm(models.keys()):
+        
+        if model == 'LGB': models[model] = MultiOutputRegressor(models[model])
+        models[model].fit(x_train, y_train)
+        #with open(models_path + f"{model}_{y_train}.sav", "wb") as f:
+        #    pickle.dump(models[model], f)
+
+        p = models[model].predict(x_test).reshape(y_test.shape[0],future,len(stations))
+        preds.append(p)
 
     y_pred = np.stack(preds).mean(axis=0)
-    y_test = np.array(y_test).reshape(y_test.shape[0],future,n_stations)
+    y_test = np.array(y_test).reshape(y_test.shape[0],future,len(stations))
 
     # plot preds by hour (optional) * display performance metrics
-    for j in range(n_stations):
+    for j in range(len(stations)):
         for i in range(future):
             p = y_pred[:,i,j]
             t = y_test[:,i,j]
             display_metrics(t, p)
-        #    plt.plot(t); plt.plot(p); 
-        #    plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
-        #    plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
-        #    plt.savefig(results_path + f"{target}/station={j+1}_hour={i+1}.png")
-        #    plt.clf()
-        #    #plt.show()
-        make_forecast_video(j, y_test, y_pred)
+            #plt.plot(t); plt.plot(p); 
+            #plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
+            #plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
+            #plt.savefig(results_path + f"{target}/station={j+1}_hour={i+1}.png")
+            #plt.clf()
+            #plt.show()
+        #make_forecast_video(j, y_test, y_pred)
 
     # plot preds by station (optional)
     #for i in range(100):
@@ -333,5 +342,5 @@ for target, n_stations in zip(targets, num_stations):
     #    pd.DataFrame(np.hstack([p2, t2])).plot()
     #    plt.show()
     
-    '''
+    
 

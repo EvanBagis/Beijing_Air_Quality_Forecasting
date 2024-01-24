@@ -301,14 +301,17 @@ for target in targets:
     
     model1 = LassoLars(alpha=0.001)#Lasso(alpha=0.0001)
     model2 = MLPRegressor()
-    model3 = RandomForestRegressor(n_estimators=20, n_jobs=-1)
+    model3 = RandomForestRegressor(n_estimators=100, n_jobs=-1)
     model4 = XGBRegressor(n_estimators = 50, objective='reg:squarederror', n_jobs=-1)
     model5 = LGBMRegressor(n_estimators = 5, n_jobs=-1, verbose=-1)
     
 
-    preds = []# , "MLP":model2, "RF":model3, "XGB":model4
-    models = {"LR":model1, 'LGB':model5}
+    preds = []# "LR":model1, "MLP":model2, "RF":model3, "XGB":model4
+    models = {"MLP":model2}
     for model in tqdm(models.keys()):
+        
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
         
         if model == 'LGB': models[model] = MultiOutputRegressor(models[model])
         models[model].fit(x_train, y_train)
@@ -327,12 +330,12 @@ for target in targets:
             p = y_pred[:,i,j]
             t = y_test[:,i,j]
             display_metrics(t, p)
-            #plt.plot(t); plt.plot(p); 
-            #plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
-            #plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
+            plt.plot(t); plt.plot(p); 
+            plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
+            plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
             #plt.savefig(results_path + f"{target}/station={j+1}_hour={i+1}.png")
             #plt.clf()
-            #plt.show()
+            plt.show()
         #make_forecast_video(j, y_test, y_pred)
 
     # plot preds by station (optional)

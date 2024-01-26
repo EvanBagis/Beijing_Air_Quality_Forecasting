@@ -275,6 +275,7 @@ dfs['wd'] = dfs['wd'].apply(wind_dir).apply(transform)
 stations = list(dfs['station'].unique())
 
 for target in targets:
+    print(target)
     target_by_station = pd.DataFrame()
     for station in stations:
         temp = dfs[dfs['station']==station]
@@ -310,8 +311,8 @@ for target in targets:
     models = {"MLP":model2}
     for model in tqdm(models.keys()):
         
-        x_train = scaler.fit_transform(x_train)
-        x_test = scaler.transform(x_test)
+        #x_train = scaler.fit_transform(x_train)
+        #x_test = scaler.transform(x_test)
         
         if model == 'LGB': models[model] = MultiOutputRegressor(models[model])
         models[model].fit(x_train, y_train)
@@ -330,12 +331,12 @@ for target in targets:
             p = y_pred[:,i,j]
             t = y_test[:,i,j]
             display_metrics(t, p)
-            plt.plot(t); plt.plot(p); 
-            plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
-            plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
+            #plt.plot(t); plt.plot(p); 
+            #plt.legend(["Observations", "Predictions"], loc="upper center"); plt.title(f"Forecast of hour {i+1}")
+            #plt.text(t.shape[0]-200, t.max()-10, display_metrics(t, p, returns=True))
             #plt.savefig(results_path + f"{target}/station={j+1}_hour={i+1}.png")
             #plt.clf()
-            plt.show()
+            #plt.show()
         #make_forecast_video(j, y_test, y_pred)
 
     # plot preds by station (optional)

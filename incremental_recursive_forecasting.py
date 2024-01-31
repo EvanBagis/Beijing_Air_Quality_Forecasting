@@ -28,6 +28,27 @@ warnings.filterwarnings("ignore")
 plt.rcParams.update({'font.size': 22})
 
 # Functions
+def check_and_create_directories(parent_directory, directory_list):
+    """
+    Checks if directories from a list exist within a parent directory,
+    and creates them if they don't exist.
+
+    Parameters:
+    - parent_directory (str): The name of the parent directory where the directories will be created.
+    - directory_list (list): A list containing the names of directories to be created within the parent_directory.
+
+    Returns:
+    - None
+    """
+    for directory_name in directory_list:
+        new_directory = os.path.join(parent_directory, directory_name)
+
+        # Check if the directory exists
+        if os.path.exists(new_directory) and os.path.isdir(new_directory):
+            pass # print(f"The directory '{directory_name}' already exists in '{parent_directory}'.")
+        else:
+             os.makedirs(new_directory)
+
 def display_metrics(true, pred, returns=False):
     """
     Calculate and display or return regression metrics.
@@ -159,6 +180,69 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
 
     Returns:
     - tuple: Tuple containing dictionaries of predictions and observations.
+    """
+    # Ensure the index is a DateTimeIndex
+    data.index = pd.to_datetime(data.index)
+
+    predictions = {i: [] for i in range(num_steps)}
+    observations = {i: [] for i in range(num_steps)}
+    predictions_all = []; observations_all = []
+    
+    # Define the model
+    model = neighbors.KNNRegressor(n_neighbors=19, p=1, window_size=400)
+
+    # Get start and end dates for the loop
+    start_date = data.index[num_lags]
+    end_date = data.index[-num_steps]
+
+    for current_date in tqdm(pd.date_range(start=start_date, end=end_date, freq=pd.DateOffset(hours=num_steps))):
+        train_start = current_date - pd.DateOffset(hours=num_lags)
+        train_end = current_date
+
+        # Extract training data for the current window
+        x = data.loc[train_start:train_end].reset_index(drop=True).to_dict()
+
+        # Prediction loop
+        x_new = deepcopy(x)
+        x_train = []
+        for j in range(num_steps):
+            x_train.append(x_new)
+            y_pred = model.predict_one(x_new)
+            
+            # Collect predictions
+            predictions[j].append(round(y_pred))
+            predictions_all.append(round(y_pred))
+
+            # Create the next instance
+            x_new = {k: x_new[k + 1] for k in range(len(x_new) - 1)}
+            x_new[len(x_new)] = round(y_pred)
+
+        # Training loop
+        for l, xx in enumerate(x_train):
+            observation_date = current_date + pd.DateOffset(hours=l)
+            #print(train_start, train_end, observation_date)
+            model = model.learn_one(xx, data.loc[observation_date])
+            
+            # Collect observations
+            observations[l].append(data.loc[observation_date])
+            observations_all.append(data.loc[observation_date])
+
+    return predictions, observations, predictions_all, observations_all
+
+'''def recursive_forecast_multistep(data, num_steps, num_lags):
+    """
+    Perform multistep recursive forecasting using a machine learning model.
+
+    This function takes a time series data (single column) and performs multistep recursive forecasting
+    using a machine learning model, such as K-Nearest Neighbors Regressor.
+
+    Parameters:
+    - data (pd.DataFrame): Time series data with the target variable.
+    - num_steps (int): Number of steps to forecast into the future.
+    - num_lags (int): Number of lagged values to consider as features.
+
+    Returns:
+    - tuple: Tuple containing dictionaries of predictions and observations.
         The first dictionary contains predictions for each step, and
         the second dictionary contains corresponding observed values.
 
@@ -216,14 +300,54 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
             observations[l].append(data.iloc[i+num_lags+l])
     #print([len(predictions[key]) for key in predictions.keys()])     # ----debuging---
     #print([len(observations[key]) for key in observations.keys()])   # ----debuging---
-    return predictions, observations
+    return predictions, observations'''
 
-# read the file names and set the targets
-path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/raw_data/'; files = sorted(os.listdir(path))
+def make_forecast_video(target, n_station, y_test, y_pred, path):
+    '''
+    note:total number of frames = duration*fps
+    y_test: numpy array
+    y_pred: numpy array
+    '''
+    duration = 12
+    tqdm._instances.clear()
+    
+    yy_pred = y_pred.iteritems()
+    yy_test = y_test.iteritems()
+    
+    fig, ax = plt.subplots(figsize=(20, 5))
+    
+    #right_side = ax.spines["right"]; right_side.set_visible(False)
+    #upper_side = ax.spines["top"]; upper_side.set_visible(False)
+    def make_frame(t):
+        #print(t)
+        #print(next(yy_test))
+        ax.clear()
+        # element 1 because next return tuple (i, row(i))
+        #print(y_test.iloc[:,int(t)])
+        tt = (t, y_test.iloc[:,int(t)]); p = (t, y_pred.iloc[:,int(t)])
+        #print(tt, p)
+        ax.plot(tt[1], linewidth=2)
+        ax.plot(p[1], linewidth=2, color="r")
+        plt.legend(["Observations", "Predictions"], loc="upper left")
+        rmse, mae, r2, r, rs, MBE, ia = display_metrics(tt[1], p[1], returns=True)
+        plt.title(f"Forecast of hour {tt[0]+1}\n (RMSE = {rmse:.2f}, MAE = {mae:.2f}, r2 = {r2:.2f}\n Pearson = {r:.2f}, Spearman = {rs:.2f}\n MBE = {MBE:.2f} , IA = {ia:.2f})")
+        #plt.text(tt[1].shape[0]-200, tt[1].mean(), display_metrics(tt[1], p[1], returns=True))
+        plt.tight_layout()
+        plt.box("off")
+        return mplfig_to_npimage(fig)
+
+    animation = VideoClip(make_frame, duration=duration)
+    animation.write_gif(path + f"/gifs/{target}/station={n_station}.gif", fps=1)
+    #animation.ipython_display(fps=30, loop=False, autoplay=True, maxduration=12000)
+
+
+path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
+path_data = path + 'raw_data/'; files = sorted(os.listdir(path_data))
 targets = ['O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
+check_and_create_directories(path + "gifs/", targets)
 
 # load and concatenate all the files into a single dataframe
-dfs = pd.concat([pd.read_csv(path + file, index_col=0) for file in files])
+dfs = pd.concat([pd.read_csv(path_data + file, index_col=0) for file in files])
 
 # get the station names
 stations = list(dfs['station'].unique())
@@ -236,29 +360,43 @@ dfs = dfs.drop(['year', 'month', 'day', 'hour'], axis=1)
 dfs['wd'] = dfs['wd'].apply(wind_dir).apply(transform)
 
 # run forecasting for all the pollutant species
-for target in targets:
+for target in targets[:1]:
     #print(target)
+    
     # collect the target time series for each station
     target_by_station = pd.DataFrame()
     for station in stations:
         temp = dfs[dfs['station']==station]
         target_by_station[f"{target}_{station}"] = temp[target]
     
+    # initialize the results df for every horizon
+    results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     # results and plotting
-    for col in target_by_station.columns[:5]:
+    for col in target_by_station.columns[:2]:
         print(col)
-        predictions, observations = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill').reset_index(drop=True), 12, 24)
-        #print(predictions.keys(), observations.keys())
-        for key in predictions.keys():
-            display_metrics(np.array(observations[key]), np.array(predictions[key]))
-            #plt.figure(figsize=(10, 6))
-            #plt.plot(observations[key], label='Original')
-            #plt.plot(predictions[key], linestyle='--', color='orange')
-            #plt.xlabel('Index')
-            #plt.ylabel('Target Variable')
-            #plt.legend()
-            #plt.title('Recursive Forecasting with Linear Regression (pd.Series)')
-            #plt.show()
-            #plt.close('all')
-            #break
-        #break
+        predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill'), 12, 24) # .reset_index(drop=True)
+        rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)
+        
+        predictions = pd.DataFrame(predictions); observations = pd.DataFrame(observations)
+        make_forecast_video(target, col, observations, predictions, path)
+        results_df.loc[col,:] = rmse, mae, r2, r, rs, MBE, ia
+
+    print(results_df)
+    # Define the title to search for
+    title_to_find = f'{target} Forecasting (incremental recursive)'
+
+    # Open the existing Markdown file and read its content
+    markdown_file_path = path + 'README.md'
+    with open(markdown_file_path, 'r') as f:
+        lines = f.readlines()
+
+    # Find the line number containing the title
+    title_line_index = next((i for i, line in enumerate(lines) if title_to_find in line), None)
+
+    if title_line_index is not None:
+        # Insert the DataFrame in Markdown format after the title line
+        lines.insert(title_line_index + 1, '\n' + results_df.to_markdown(index=False) + '\n')
+
+        # Write the updated content back to the Markdown file
+        with open(markdown_file_path, 'w') as f:
+            f.writelines(lines)

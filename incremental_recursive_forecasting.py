@@ -394,8 +394,10 @@ for target in targets[:1]:
     title_line_index = next((i for i, line in enumerate(lines) if title_to_find in line), None)
 
     if title_line_index is not None:
-        # Insert the DataFrame in Markdown format after the title line
-        lines.insert(title_line_index + 1, '\n' + results_df.to_markdown(index=False) + '\n')
+        # Insert the DataFrame in Markdown format after the title line, centered
+        df_markdown = results_df.to_markdown(index=False)
+        centered_df_markdown = f"<div style='text-align:center'>{df_markdown}</div>\n\n"
+        lines.insert(title_line_index + 1, centered_df_markdown)
 
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:

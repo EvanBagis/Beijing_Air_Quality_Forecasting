@@ -1,5 +1,7 @@
 # basic
 import os
+import markdown
+from bs4 import BeautifulSoup
 import warnings
 from tqdm import tqdm
 import pickle
@@ -341,6 +343,8 @@ def make_forecast_video(target, n_station, y_test, y_pred, path):
     #animation.ipython_display(fps=30, loop=False, autoplay=True, maxduration=12000)
 
 
+
+
 path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 path_data = path + 'raw_data/'; files = sorted(os.listdir(path_data))
 targets = ['O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
@@ -388,6 +392,23 @@ for target in targets[:1]:
     # Open the existing Markdown file and read its content
     markdown_file_path = path + 'README.md'
     with open(markdown_file_path, 'r') as f:
+        
+        markdown_content = f.read()
+        
+    html_content = markdown.markdown(markdown_content)
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Remove table elements
+    for table in soup.find_all('table'):
+        table.extract()
+
+    # Convert the modified HTML back to Markdown format
+    modified_markdown_content = str(soup)
+    
+    with open(markdown_file_path, 'w') as f:
+        f.write(modified_markdown_content)
+        
+    with open(markdown_file_path, 'r') as f:
         lines = f.readlines()
 
     # Find the line number containing the title
@@ -395,7 +416,7 @@ for target in targets[:1]:
 
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
-        lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown(index=False) + '\n\n' + '</div> \n\n')
+        lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown() + '\n\n' + '</div> \n\n')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

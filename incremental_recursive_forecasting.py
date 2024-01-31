@@ -395,7 +395,7 @@ for target in targets[:1]:
 
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
-        lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n' + results_df.to_markdown(index=False) + '\n' + '<"center"> \n')
+        lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown(index=False) + '\n\n' + '</div> \n\n')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

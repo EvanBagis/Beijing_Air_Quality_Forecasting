@@ -218,4 +218,4 @@ def make_forecast_video(target, n_station, y_test, y_pred, path, mode):
         return mplfig_to_npimage(fig)
 
     animation = VideoClip(make_frame, duration=duration)
-    animation.write_gif(path + f"/gifs/{target}/{mode} {n_station}.gif", fps=1)
+    animation.write_gif(path + f"/gifs/{target}/{mode}{n_station}.gif", fps=1)

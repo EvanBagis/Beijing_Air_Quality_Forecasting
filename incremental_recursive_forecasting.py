@@ -1,7 +1,6 @@
 # basic
 import os
-import markdown
-from bs4 import BeautifulSoup
+import re
 import warnings
 from tqdm import tqdm
 import pickle
@@ -209,6 +208,7 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
         x_train = []
         for j in range(num_steps):
             x_train.append(x_new)
+            #print(x_new)
             y_pred = model.predict_one(x_new)
             
             # Collect predictions
@@ -347,7 +347,7 @@ def make_forecast_video(target, n_station, y_test, y_pred, path):
 
 path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 path_data = path + 'raw_data/'; files = sorted(os.listdir(path_data))
-targets = ['O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
+targets = ['NO2', 'O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
 check_and_create_directories(path + "gifs/", targets)
 
 # load and concatenate all the files into a single dataframe
@@ -364,7 +364,7 @@ dfs = dfs.drop(['year', 'month', 'day', 'hour'], axis=1)
 dfs['wd'] = dfs['wd'].apply(wind_dir).apply(transform)
 
 # run forecasting for all the pollutant species
-for target in targets[:1]:
+for target in targets:
     #print(target)
     
     # collect the target time series for each station
@@ -376,13 +376,13 @@ for target in targets[:1]:
     # initialize the results df for every horizon
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     # results and plotting
-    for col in target_by_station.columns[:2]:
+    for i, col in enumerate(target_by_station.columns):
         print(col)
-        predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill'), 12, 24) # .reset_index(drop=True)
+        predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill').dropna(), 12, 24) # .reset_index(drop=True)
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)
         
         predictions = pd.DataFrame(predictions); observations = pd.DataFrame(observations)
-        make_forecast_video(target, col, observations, predictions, path)
+        if i == 0: make_forecast_video(target, col, observations, predictions, path)
         results_df.loc[col,:] = rmse, mae, r2, r, rs, MBE, ia
 
     print(results_df)
@@ -391,23 +391,6 @@ for target in targets[:1]:
 
     # Open the existing Markdown file and read its content
     markdown_file_path = path + 'README.md'
-    with open(markdown_file_path, 'r') as f:
-        
-        markdown_content = f.read()
-        
-    html_content = markdown.markdown(markdown_content)
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Remove table elements
-    for table in soup.find_all('table'):
-        table.extract()
-
-    # Convert the modified HTML back to Markdown format
-    modified_markdown_content = str(soup)
-    
-    with open(markdown_file_path, 'w') as f:
-        f.write(modified_markdown_content)
-        
     with open(markdown_file_path, 'r') as f:
         lines = f.readlines()
 

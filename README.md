@@ -14,7 +14,8 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/O3/station=O3_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/O3/station=O3_Aotizhongxin.gif)
+
 
 
 <p align="center">PM10 Forecasting (incremental recursive)</p>
@@ -28,7 +29,7 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/PM10/station=PM10_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/station=PM10_Aotizhongxin.gif)
 
 
 <p align="center">PM2.5 Forecasting (incremental recursive)</p>
@@ -42,9 +43,7 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/PM2.5/station=PM2.5_Aotizhongxin.gif)
-
-
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/station=PM2.5_Aotizhongxin.gif)
 
 
 <p align="center">NO2 Forecasting (incremental recursive)</p>
@@ -58,7 +57,7 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
 <div align="center"> 
 
 |                  |    RMSE |     MAE |      r2 |   Pearson |   Spearman |       MBE |       IA |
@@ -68,7 +67,7 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
 
 
 
@@ -83,7 +82,8 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/SO2/station=SO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/station=SO2_Aotizhongxin.gif)
+
 
 <p align="center">CO Forecasting (incremental recursive)</p>
 
@@ -96,8 +96,7 @@
 
 </div> 
 
-![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/CO/station=CO_Aotizhongxin.gif)
-
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/station=CO_Aotizhongxin.gif)
 
 
 ### TODO

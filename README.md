@@ -44,7 +44,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/O3/station=O3_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/O3/incremental recursive O3_Aotizhongxin.gif)
 
 
 
@@ -70,7 +70,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/station=PM10_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/incremental recursive PM10_Aotizhongxin.gif)
 
 
 
@@ -96,7 +96,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/station=PM2.5_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/incremental recursive PM2.5_Aotizhongxin.gif)
 
 
 
@@ -122,7 +122,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/incremental recursive NO2_Aotizhongxin.gif)
 <div align="center"> 
 
 |                   |    RMSE |     MAE |       r2 |   Pearson |   Spearman |       MBE |       IA |
@@ -142,7 +142,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/station=NO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/incremental recursive NO2_Aotizhongxin.gif)
 
 
 
@@ -168,7 +168,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/station=SO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/incremental recursive SO2_Aotizhongxin.gif)
 
 
 
@@ -194,7 +194,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/station=CO_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/incremental recursive CO_Aotizhongxin.gif)
 
 
 

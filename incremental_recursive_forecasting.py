@@ -155,7 +155,7 @@ for target in targets:
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
         lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown() + '\n\n' + '</div> \n\n')
-        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/station={target}_Aotizhongxin.gif)')
+        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/incremental recursive {target}_Aotizhongxin.gif)')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

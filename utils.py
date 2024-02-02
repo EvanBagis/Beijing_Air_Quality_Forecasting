@@ -190,7 +190,7 @@ def make_forecast_video(target, n_station, y_test, y_pred, path, mode):
     yy_pred = y_pred.iteritems()
     yy_test = y_test.iteritems()
     
-    fig, ax = plt.subplots(figsize=(20, 5))
+    fig, ax = plt.subplots(figsize=(20, 10))
     def make_frame(t):
         """
         Generate a frame for the video clip.
@@ -213,6 +213,8 @@ def make_forecast_video(target, n_station, y_test, y_pred, path, mode):
         plt.legend(["Observations", "Predictions"], loc="upper left")
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(tt[1], p[1], returns=True)
         plt.title(f"Forecast of hour {tt[0]+1}\n (RMSE = {rmse:.2f}, MAE = {mae:.2f}, r2 = {r2:.2f}\n Pearson = {r:.2f}, Spearman = {rs:.2f}\n MBE = {MBE:.2f} , IA = {ia:.2f})")
+        plt.xlabel('Time')
+        plt.ylabel(f'{n_station}')
         plt.tight_layout()
         plt.box("off")
         return mplfig_to_npimage(fig)

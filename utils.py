@@ -162,7 +162,7 @@ def transform(angle):
     return np.sin(angle * np.pi / 180)
 
 
-def make_forecast_video(target, n_station, y_test, y_pred, path):
+def make_forecast_video(target, n_station, y_test, y_pred, path, mode):
     """
     Generate a GIF animation visualizing the forecasted values compared to the observed values.
 
@@ -218,4 +218,4 @@ def make_forecast_video(target, n_station, y_test, y_pred, path):
         return mplfig_to_npimage(fig)
 
     animation = VideoClip(make_frame, duration=duration)
-    animation.write_gif(path + f"/gifs/{target}/station={n_station}.gif", fps=1)
+    animation.write_gif(path + f"/gifs/{target}/{mode} {n_station}.gif", fps=1)

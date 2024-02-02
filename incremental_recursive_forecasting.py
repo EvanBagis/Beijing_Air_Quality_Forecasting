@@ -14,7 +14,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from scipy.stats import pearsonr, spearmanr
 
 # models
-from river import preprocessing, linear_model, optim, neighbors
+from river import preprocessing, linear_model, optim, neighbors, ensemble
 
 # plotting
 import seaborn as sns
@@ -28,10 +28,8 @@ warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 warnings.filterwarnings("ignore")
 plt.rcParams.update({'font.size': 22})
 
-
 # local functions
 from utils import *
-
 
 def recursive_forecast_multistep(data, num_steps, num_lags):
     """
@@ -56,7 +54,10 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
     predictions_all = []; observations_all = []
     
     # Define the model
-    model = neighbors.KNNRegressor(n_neighbors=19, p=1, window_size=400)
+    #knn_model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
+    #model = ensemble.AdaptiveRandomForestRegressor(leaf_model=knn_model, n_models=5, split_confidence=0.001)
+    
+    model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
 
     # Get start and end dates for the loop
     start_date = data.index[num_lags]
@@ -88,7 +89,6 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
         # Training loop
         for l, xx in enumerate(x_train):
             observation_date = current_date + pd.DateOffset(hours=l)
-            #print(train_start, train_end, observation_date)
             model = model.learn_one(xx, data.loc[observation_date])
             
             # Collect observations
@@ -131,13 +131,13 @@ for target in targets:
     # initialize the results df for every horizon
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     # results and plotting
-    for i, col in enumerate(target_by_station.columns[:2]):
+    for i, col in enumerate(target_by_station.columns):
         print(col)
         predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill').dropna(), 12, 24) # .reset_index(drop=True)
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)
         
         predictions = pd.DataFrame(predictions); observations = pd.DataFrame(observations)
-        if i == 0: make_forecast_video(target, col, observations, predictions, path)
+        if i == 0: make_forecast_video(target, col, observations, predictions, path, 'incremental recursive')
         results_df.loc[col,:] = rmse, mae, r2, r, rs, MBE, ia
 
     print(results_df)

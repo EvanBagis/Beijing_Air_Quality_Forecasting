@@ -1,6 +1,26 @@
 # Beijing_Air_Quality_Forecasting
 ## Introduction
+
+This repository implements four different forecasting frameworks. 
+
+- **Incremental recursive forecasting** uses the river python library to implement an incremental forecasting model that aims to forecast 12 hours in the future. The model accepts 24 lag features from the time series that will be forecasted. The approach is a recursive one where the model initially accepts the last 24 observations to predict the future value one step ahead. The prediction becomes the last value of the input instance to predict the future value 2 steps ahead and so on. The model is implemented with the [river](https://riverml.xyz/0.21.0/) package.
+
+- **Incremental multiouput forecasting** 
+
+- **Batch recursive forecasting**
+
+- **Batch multioutput forecasting**
+
+
+
+
+
 ### Conceptual framework
+
+
+
+
+
 
 ### Results
 <p align="center">O3 Forecasting (incremental recursive)</p>
@@ -32,6 +52,7 @@
 ![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/station=PM10_Aotizhongxin.gif)
 
 
+
 <p align="center">PM2.5 Forecasting (incremental recursive)</p>
 
 <div align="center"> 
@@ -44,6 +65,7 @@
 </div> 
 
 ![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/station=PM2.5_Aotizhongxin.gif)
+
 
 
 <p align="center">NO2 Forecasting (incremental recursive)</p>
@@ -71,6 +93,8 @@
 
 
 
+
+
 <p align="center">SO2 Forecasting (incremental recursive)</p>
 
 <div align="center"> 
@@ -85,6 +109,7 @@
 ![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/station=SO2_Aotizhongxin.gif)
 
 
+
 <p align="center">CO Forecasting (incremental recursive)</p>
 
 <div align="center"> 
@@ -97,6 +122,7 @@
 </div> 
 
 ![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/station=CO_Aotizhongxin.gif)
+
 
 
 ### TODO

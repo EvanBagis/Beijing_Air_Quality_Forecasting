@@ -44,7 +44,8 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/O3/incremental recursive O3_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/O3/incremental_recursive_O3_Aotizhongxin.gif)
+
 
 
 
@@ -70,7 +71,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/incremental recursive PM10_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM10/incremental_recursive_PM10_Aotizhongxin.gif)
 
 
 
@@ -96,7 +97,8 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/incremental recursive PM2.5_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/PM2.5/incremental_recursive_PM2.5_Aotizhongxin.gif)
+
 
 
 
@@ -122,27 +124,8 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/incremental recursive NO2_Aotizhongxin.gif)
-<div align="center"> 
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/incremental_recursive_NO2_Aotizhongxin.gif)
 
-|                   |    RMSE |     MAE |       r2 |   Pearson |   Spearman |       MBE |       IA |
-|:------------------|--------:|--------:|---------:|----------:|-----------:|----------:|---------:|
-| NO2_Aotizhongxin  | 32.1402 | 23.834  | 0.24566  |  0.543479 |   0.527637 | -0.838969 | 0.725801 |
-| NO2_Changping     | 25.2256 | 18.6075 | 0.276202 |  0.566981 |   0.526763 | -0.74235  | 0.740022 |
-| NO2_Dingling      | 21.6506 | 14.3372 | 0.32332  |  0.61206  |   0.562815 | -0.476287 | 0.775466 |
-| NO2_Dongsi        | 29.7603 | 21.8094 | 0.254994 |  0.556854 |   0.533432 | -1.03003  | 0.737949 |
-| NO2_Guanyuan      | 30.5643 | 22.5363 | 0.246508 |  0.556432 |   0.535726 | -1.55319  | 0.738516 |
-| NO2_Gucheng       | 32.8889 | 24.6184 | 0.189728 |  0.512663 |   0.475695 | -1.11494  | 0.711579 |
-| NO2_Huairou       | 22.1836 | 15.4131 | 0.288623 |  0.586366 |   0.588083 | -0.806725 | 0.75657  |
-| NO2_Nongzhanguan  | 32.073  | 24.0664 | 0.226855 |  0.532609 |   0.503358 | -1.03677  | 0.72048  |
-| NO2_Shunyi        | 27.2231 | 19.9532 | 0.258704 |  0.552892 |   0.51279  | -0.406913 | 0.733085 |
-| NO2_Tiantan       | 27.5522 | 20.572  | 0.258563 |  0.55472  |   0.527737 | -1.15421  | 0.732978 |
-| NO2_Wanliu        | 31.3144 | 23.1851 | 0.32951  |  0.612353 |   0.58637  | -1.53243  | 0.775101 |
-| NO2_Wanshouxigong | 30.9517 | 22.8474 | 0.264488 |  0.569695 |   0.543399 | -1.60543  | 0.747852 |
-
-</div> 
-
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/NO2/incremental recursive NO2_Aotizhongxin.gif)
 
 
 
@@ -168,7 +151,8 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/incremental recursive SO2_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/SO2/incremental_recursive_SO2_Aotizhongxin.gif)
+
 
 
 
@@ -194,7 +178,7 @@ This repository implements teo (3) different forecasting frameworks. The framewo
 
 </div> 
 
-![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/incremental recursive CO_Aotizhongxin.gif)
+![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/CO/incremental_recursive_CO_Aotizhongxin.gif)
 
 
 

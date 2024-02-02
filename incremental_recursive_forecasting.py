@@ -102,7 +102,7 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
 # define static parameters for the problem
 path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 path_data = path + 'raw_data/'; files = sorted(os.listdir(path_data))
-targets = ['NO2', 'O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
+targets = ['O3', 'PM2.5', 'PM10', 'SO2', 'NO2', 'CO']
 check_and_create_directories(path + "gifs/", targets)
 
 # load and concatenate all the files into a single dataframe
@@ -137,7 +137,7 @@ for target in targets:
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)
         
         predictions = pd.DataFrame(predictions); observations = pd.DataFrame(observations)
-        if i == 0: make_forecast_video(target, col, observations, predictions, path, 'incremental recursive')
+        if i == 0: make_forecast_video(target, col, observations, predictions, path, 'incremental_recursive_')
         results_df.loc[col,:] = rmse, mae, r2, r, rs, MBE, ia
 
     print(results_df)
@@ -155,7 +155,7 @@ for target in targets:
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
         lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown() + '\n\n' + '</div> \n\n')
-        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/incremental recursive {target}_Aotizhongxin.gif)')
+        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/incremental_recursive_{target}_Aotizhongxin.gif)')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

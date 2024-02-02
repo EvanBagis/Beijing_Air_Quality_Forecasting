@@ -376,7 +376,7 @@ for target in targets:
     # initialize the results df for every horizon
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     # results and plotting
-    for i, col in enumerate(target_by_station.columns):
+    for i, col in enumerate(target_by_station.columns[:2]):
         print(col)
         predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill').dropna(), 12, 24) # .reset_index(drop=True)
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)
@@ -400,6 +400,7 @@ for target in targets:
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
         lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown() + '\n\n' + '</div> \n\n')
+        lines.insert(title_line_index + 2, f'![Animated GIF](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/tree/master/gifs/{target}/station={target}_Aotizhongxin.gif)')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

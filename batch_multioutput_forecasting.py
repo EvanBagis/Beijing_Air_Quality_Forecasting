@@ -157,8 +157,7 @@ for target in targets:
     y_pred = np.stack(preds).mean(axis=0)
     y_test = np.array(y_test).reshape(y_test.shape[0],future,len(stations))
 
-    # plot preds by hour (optional) * display performance metrics
-    
+    # calculate performance metrics
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     for j in range(len(stations)):
         #for i in range(future):
@@ -176,9 +175,10 @@ for target in targets:
         
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(true), np.array(pred), returns=True)
         
-        results_df.loc[stations[j],:] = rmse, mae, r2, r, rs, MBE, ia
+        results_df.loc[f'{target}' + stations[j],:] = rmse, mae, r2, r, rs, MBE, ia
         
-    print(results_df)
+    # write results to README
+    # print(results_df)
     # Define the title to search for
     title_to_find = f'{target} Forecasting (batch multioutput)'
 
@@ -193,7 +193,8 @@ for target in targets:
     if title_line_index is not None:
         # Insert the DataFrame in Markdown format after the title line
         lines.insert(title_line_index + 1, '\n' + '<div align="center"> \n\n' + results_df.to_markdown() + '\n\n' + '</div> \n\n')
-        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/batch_multioutput_{target}_Aotizhongxin.gif)')
+        # insert gif in README
+        lines.insert(title_line_index + 2, f'![](https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/gifs/{target}/batch_multioutput_{target}_Aotizhongxin.gif)' + '\n\n')
         # Write the updated content back to the Markdown file
         with open(markdown_file_path, 'w') as f:
             f.writelines(lines)

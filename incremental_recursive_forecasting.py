@@ -54,10 +54,10 @@ def recursive_forecast_multistep(data, num_steps, num_lags):
     predictions_all = []; observations_all = []
     
     # Define the model
-    #knn_model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
-    #model = ensemble.AdaptiveRandomForestRegressor(leaf_model=knn_model, n_models=5, split_confidence=0.001)
+    knn_model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
+    model = ensemble.AdaptiveRandomForestRegressor(leaf_model=knn_model, n_models=5, split_confidence=0.001)
     
-    model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
+    #model = neighbors.KNNRegressor(n_neighbors=9, p=1, window_size=400)
 
     # Get start and end dates for the loop
     start_date = data.index[num_lags]
@@ -131,7 +131,7 @@ for target in targets:
     # initialize the results df for every horizon
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     # results and plotting
-    for i, col in enumerate(target_by_station.columns[:1]):
+    for i, col in enumerate(target_by_station.columns):
         print(col)
         predictions, observations, predictions_all, observations_all = recursive_forecast_multistep(target_by_station[col].fillna(method='ffill').dropna(), 12, 24) # .reset_index(drop=True)
         rmse, mae, r2, r, rs, MBE, ia = display_metrics(np.array(observations_all), np.array(predictions_all), returns=True)

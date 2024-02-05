@@ -91,7 +91,7 @@ def feature_engineering(data, lags, window_sizes):
 
 # MAIN
 
-future = 12; num_feats = 12
+future = 12; num_feats = 24
 path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 data_path = path + 'raw_data/'
 files = sorted(os.listdir(data_path))
@@ -121,6 +121,7 @@ for target in targets:
     for i in range(len(target_by_station)-num_feats-future):
         x.append(np.ravel(np.array(target_by_station.iloc[i:i+num_feats, :])))
         y.append(np.ravel(np.array(target_by_station.iloc[i+num_feats:i+num_feats+future, :])))
+        #print(np.array(target_by_station.iloc[i:i+num_feats, :]).shape); break
     
     x = np.stack(x); y = np.stack(y)
     

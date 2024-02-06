@@ -141,7 +141,7 @@ for target in targets:
     
 
     preds = []# "LR":model1, "MLP":model2, "RF":model3, "XGB":model4
-    models = {"LR":model1}
+    models = {"RF":model3}
     for model in tqdm(models.keys()):
         
         #x_train = scaler.fit_transform(x_train)

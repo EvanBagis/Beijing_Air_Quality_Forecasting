@@ -1,8 +1,9 @@
 # Beijing_Air_Quality_Forecasting
 
-<div style="text-align:center;">
+<p align="center">
   <img src="https://github.com/EvanBagis/Beijing_Air_Quality_Forecasting/blob/master/imgs/inversion.jpg" alt="Image" />
-</div>
+</p>
+
 
 
 ## Introduction

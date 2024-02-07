@@ -176,10 +176,10 @@ for target in targets:
     # calculate performance metrics
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     for j in range(len(stations)):
-        for i in range(future):
-            p = y_pred[:,i,j]
-            t = y_test[:,i,j]
-            display_metrics(t, p)
+        #for i in range(future):
+        #    p = y_pred[:,i,j]
+        #   t = y_test[:,i,j]
+        #    display_metrics(t, p)
         p_gif = pd.DataFrame(y_pred[:,:,j])
         t_gif = pd.DataFrame(y_test[:,:,j])
         #print(p_gif.shape, t_gif.shape)

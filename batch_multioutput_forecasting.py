@@ -96,7 +96,7 @@ path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 data_path = path + 'raw_data/'
 files = sorted(os.listdir(data_path))
 targets = ['PM2.5', 'PM10', 'SO2', 'NO2', 'CO', 'O3']
-mode = 'cov'
+mode = ''
 
 # load and concatenate all the files into a single dataframe
 dfs = pd.concat([pd.read_csv(data_path + file, index_col=0) for file in files])

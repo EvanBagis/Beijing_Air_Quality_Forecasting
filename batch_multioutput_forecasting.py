@@ -96,6 +96,7 @@ path = '/home/evan/venv/Beijing_Air_Quality_Forecasting/'
 data_path = path + 'raw_data/'
 files = sorted(os.listdir(data_path))
 targets = ['PM2.5', 'PM10', 'SO2', 'NO2', 'CO', 'O3']
+mode = 'cov'
 
 # load and concatenate all the files into a single dataframe
 dfs = pd.concat([pd.read_csv(data_path + file, index_col=0) for file in files])
@@ -111,15 +112,29 @@ stations = list(dfs['station'].unique())
 for target in targets:
     print(target)
     target_by_station = pd.DataFrame()
+    covariates_by_stations = pd.DataFrame()
     for station in stations:
         temp = dfs[dfs['station']==station]
         target_by_station[f"{target}_{station}"] = temp[target]
         
+        temp2 = temp.drop([target, 'station'], axis=1)
+        for col in temp2.columns:
+            covariates_by_stations[f'{col}'] = temp[col]
+        
+        
     target_by_station = target_by_station.fillna(method='ffill').dropna().reset_index(drop=True)
+    covariates_by_stations = covariates_by_stations.fillna(method='ffill').dropna().reset_index(drop=True)
+    #print(target_by_station.shape, covariates_by_stations.shape)
+    #print(target_by_station.isna().sum().sum(), covariates_by_stations.isna().sum().sum())
     
     x = []; y = []
     for i in range(len(target_by_station)-num_feats-future):
-        x.append(np.ravel(np.array(target_by_station.iloc[i:i+num_feats, :])))
+        #print(target_by_station.iloc[i:i+num_feats, :].shape)
+        #print(covariates_by_stations.iloc[i:i+num_feats, :].shape)
+        #print(pd.concat([target_by_station.iloc[i:i+num_feats, :], covariates_by_stations.iloc[i:i+num_feats, :]], axis=1).shape)
+        #break
+        if mode=='cov': x.append(np.ravel(np.array(     pd.concat([target_by_station.iloc[i:i+num_feats, :], covariates_by_stations.iloc[i:i+num_feats, :]],axis=1)      )))
+        else: x.append(np.ravel(np.array(target_by_station.iloc[i:i+num_feats, :])))
         y.append(np.ravel(np.array(target_by_station.iloc[i+num_feats:i+num_feats+future, :])))
         #print(np.array(target_by_station.iloc[i:i+num_feats, :]).shape); break
     
@@ -141,7 +156,7 @@ for target in targets:
     
 
     preds = []# "LR":model1, "MLP":model2, "RF":model3, "XGB":model4
-    models = {"RF":model3}
+    models = {"LR":model1}
     for model in tqdm(models.keys()):
         
         #x_train = scaler.fit_transform(x_train)
@@ -161,10 +176,10 @@ for target in targets:
     # calculate performance metrics
     results_df = pd.DataFrame(columns=["RMSE", "MAE", "r2", "Pearson", "Spearman", "MBE", "IA"])
     for j in range(len(stations)):
-        #for i in range(future):
-        #    p = y_pred[:,i,j]
-        #    t = y_test[:,i,j]
-        #    display_metrics(t, p)
+        for i in range(future):
+            p = y_pred[:,i,j]
+            t = y_test[:,i,j]
+            display_metrics(t, p)
         p_gif = pd.DataFrame(y_pred[:,:,j])
         t_gif = pd.DataFrame(y_test[:,:,j])
         #print(p_gif.shape, t_gif.shape)
